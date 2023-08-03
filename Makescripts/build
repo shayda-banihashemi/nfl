@@ -1,0 +1,3 @@
+#!/bin/bash
+docker build -f ../Dockerfile -t pyproq .
+docker run -t -v /Users/shaydabanihashemi/ws/myproj:/home/app/ws --name pyproj pyproj
