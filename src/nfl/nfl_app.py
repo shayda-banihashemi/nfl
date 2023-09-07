@@ -8,6 +8,7 @@ from loguru import logger
 import collections
 import pickle
 import os
+import nfl_api
 
 Stadium_Stats = {}
 
@@ -15,22 +16,32 @@ Stadium_Stats = {}
 class UrlStatusError(Exception):
     pass
 
-
 class NflFeedNotAvailable(Exception):
     pass
 
+"""def choose_api_url():
+    chosen_sport = input('What sport do you want to access? Select a number. \n (1) NFL \n (2) Tennis \n')
+    return chosen_sport"""
 
 def build_api_url():
-    initial_url = 'https://api.sportsdata.io/v3/nfl/scores/json/Scores/'
+    test = nfl_api.SportAPI
+    test.choose_sport(nfl_api.SportAPI)
+    url = test.api_links(nfl_api.SportAPI)
+    logger.info(print(url))
+    return url
+
+    """initial_url = 'https://api.sportsdata.io/v3/nfl/scores/json/Scores/'
     key = '?key=1455ced235a74c71862688fb1a38dc7f'
     url = (initial_url + '2022' + key)
     if requests.get(url).status_code != 200:
         raise UrlStatusError
-    return url
+    return url"""
 
 
 def get_most_recent_year():
     return datetime.datetime.now().year - 1
+
+
 
 
 def download_nfl_data():
@@ -89,6 +100,8 @@ def get_team_stats(users_team, nfl_data):
 def main():
     # build_api_url()
     # get_most_recent_year()
+
+
 
     if os.path.isfile('nfl.pkl'):
         with open('nfl.pkl', 'rb') as f:
