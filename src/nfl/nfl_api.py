@@ -3,6 +3,7 @@ class SportAPI:
         self.sport = sport
         self.api_link = {
             'nfl': 'https://api.sportsdata.io/v3/nfl/scores/json/Scores/2022?key=1455ced235a74c71862688fb1a38dc7f',
+            'mlb': 'https://api.sportsdata.io/v3/mlb/scores/json/Stadiums?key=2b60f921b3a841f5a87fd5275c373f9e',
             'tennis': 'https://api.sportsdata.io/v3/tennis/scores/json/Players?key=c399f941dd994a6e96d899b51666921d'
         }
 
@@ -18,7 +19,7 @@ class SportAPI:
             return self.tennis_api
 
 
-class Person:
+"""class Person:
     def __init__(self, name):
         self.name = name
     def say_hello(self, message):
@@ -32,4 +33,4 @@ print(andy.say_hello('hey'))
 bob = Person('andy')
 print(bob.say_hello('hi'))
 print(bob.name)
-print(andy)
+print(andy)"""

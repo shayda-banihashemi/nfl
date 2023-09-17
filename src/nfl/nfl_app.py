@@ -9,8 +9,30 @@ import collections
 import pickle
 import os
 import nfl_api
+import display
+import pywebio
+import builtins
 
 Stadium_Stats = {}
+
+class Terminal:
+    @staticmethod
+    def cprint(message):
+        builtins.print(message)
+
+    @staticmethod
+    def cinput(message):
+        return builtins.input(message)
+
+
+class Web(Terminal):
+    @staticmethod
+    def cprint(message):
+        pywebio.output.put_markdown(str(message))
+
+    @staticmethod
+    def cinput(message):
+        return pywebio.input.input(message)
 
 
 class UrlStatusError(Exception):
@@ -24,24 +46,22 @@ class NflFeedNotAvailable(Exception):
     return chosen_sport"""
 
 def build_api_url():
-    test = nfl_api.SportAPI
-    test.choose_sport(nfl_api.SportAPI)
-    url = test.api_links(nfl_api.SportAPI)
+    """sport = nfl_api.SportAPI
+    sport.choose_sport(nfl_api.SportAPI)
+    url = sport.api_links(nfl_api.SportAPI)
     logger.info(print(url))
-    return url
+    return url"""
 
-    """initial_url = 'https://api.sportsdata.io/v3/nfl/scores/json/Scores/'
+    initial_url = 'https://api.sportsdata.io/v3/nfl/scores/json/Scores/'
     key = '?key=1455ced235a74c71862688fb1a38dc7f'
     url = (initial_url + '2022' + key)
     if requests.get(url).status_code != 200:
         raise UrlStatusError
-    return url"""
+    return url
 
 
 def get_most_recent_year():
     return datetime.datetime.now().year - 1
-
-
 
 
 def download_nfl_data():
@@ -63,7 +83,6 @@ def download_nfl_data():
     return raw_data
     # return {game_index: raw_data[game_index]['StadiumDetails'] for game_index in range(number_games)}
 
-
 def get_users_team():
     users_team = 'BAL'
     return users_team
@@ -78,11 +97,13 @@ def validate_users_team():
 
 
 def get_stadium_attributes(stadium_state, attribute_type):
+
     stadium_data = ({game_index: stadium_state[game_index] for game_index in range(len(stadium_state))})
     stadium_state_data = (
     {game_index: stadium_state[game_index]['StadiumDetails'][attribute_type] for game_index in stadium_data})
     stadium_attribute_counter = collections.Counter(stadium_state_data.values())
     Stadium_Stats[attribute_type] = stadium_attribute_counter
+    #print(stadium_attribute_counter)
     return stadium_attribute_counter
 
 
@@ -97,12 +118,12 @@ def get_team_stats(users_team, nfl_data):
     print(team_schedule)
 
 
+
 def main():
     # build_api_url()
     # get_most_recent_year()
-
-
-
+    io = Web()
+    print = io.cprint
     if os.path.isfile('nfl.pkl'):
         with open('nfl.pkl', 'rb') as f:
             stadium_details = pickle.load(f)
@@ -117,6 +138,7 @@ def main():
     # validate_users_team()
     # team = get_users_team()
     # validate_users_team(team)
+    #print = web.cprint
     for stat in stadium_stats:
         print(stat)
 
