@@ -12,28 +12,11 @@ import nfl_api
 import display
 import pywebio
 import builtins
+import nfl_api
+import pprint
+print = pprint.pprint
 
 Stadium_Stats = {}
-
-class Terminal:
-    @staticmethod
-    def cprint(message):
-        builtins.print(message)
-
-    @staticmethod
-    def cinput(message):
-        return builtins.input(message)
-
-
-class Web(Terminal):
-    @staticmethod
-    def cprint(message):
-        pywebio.output.put_markdown(str(message))
-
-    @staticmethod
-    def cinput(message):
-        return pywebio.input.input(message)
-
 
 class UrlStatusError(Exception):
     pass
@@ -80,6 +63,8 @@ def download_nfl_data():
             break
     raw_data = json.loads(response_stats.text)
     number_games = (len(raw_data))
+    nfl_api.mongo_sports(raw_data)
+
     return raw_data
     # return {game_index: raw_data[game_index]['StadiumDetails'] for game_index in range(number_games)}
 
@@ -104,7 +89,7 @@ def get_stadium_attributes(stadium_state, attribute_type):
     stadium_attribute_counter = collections.Counter(stadium_state_data.values())
     Stadium_Stats[attribute_type] = stadium_attribute_counter
     #print(stadium_attribute_counter)
-    return stadium_attribute_counter
+    return dict(stadium_attribute_counter)
 
 
 def get_team_stats(users_team, nfl_data):
@@ -115,15 +100,12 @@ def get_team_stats(users_team, nfl_data):
             team_schedule.update({nfl_game_data[game]['Week']: nfl_game_data[game]['AwayScore']})
         if users_team == nfl_game_data[game]['HomeTeam']:
             team_schedule.update({nfl_game_data[game]['Week']: nfl_game_data[game]['HomeScore']})
-    print(team_schedule)
+    print(f"{team_schedule=}")
 
 
 
 def main():
-    # build_api_url()
-    # get_most_recent_year()
-    io = Web()
-    print = io.cprint
+
     if os.path.isfile('nfl.pkl'):
         with open('nfl.pkl', 'rb') as f:
             stadium_details = pickle.load(f)
@@ -131,18 +113,19 @@ def main():
         stadium_details = download_nfl_data()
         with open('nfl.pkl', 'wb') as f:
             pickle.dump(stadium_details, f)
+    """stadium_stats = [get_stadium_attributes(stadium_details, attribute_type) for attribute_type in
+                     ('PlayingSurface', 'Type', 'State')]"""
     stadium_stats = [get_stadium_attributes(stadium_details, attribute_type) for attribute_type in
-                     ('PlayingSurface', 'Type', 'State')]
+                     ('PlayingSurface', 'Type')]
+
     get_team_stats(users_team=get_users_team(), nfl_data=download_nfl_data())
 
-    # validate_users_team()
-    # team = get_users_team()
-    # validate_users_team(team)
-    #print = web.cprint
+    #print('stadium stats ', stadium_stats)
+
     for stat in stadium_stats:
         print(stat)
 
-
+    #nfl_api.mongo_sports(stadium_stats)
 
     # get_nfl_data()
 
