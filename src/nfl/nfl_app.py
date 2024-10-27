@@ -13,8 +13,7 @@ import display
 import pywebio
 import builtins
 import nfl_api
-import pprint
-print = pprint.pprint
+#print = pprint.pprint
 
 Stadium_Stats = {}
 
@@ -37,15 +36,13 @@ def build_api_url():
 
     initial_url = 'https://api.sportsdata.io/v3/nfl/scores/json/Scores/'
     key = '?key=1455ced235a74c71862688fb1a38dc7f'
-    url = (initial_url + '2022' + key)
+    url = (initial_url + '2024' + key)
     if requests.get(url).status_code != 200:
         raise UrlStatusError
     return url
 
-
 def get_most_recent_year():
     return datetime.datetime.now().year - 1
-
 
 def download_nfl_data():
     delay = 0
@@ -63,8 +60,7 @@ def download_nfl_data():
             break
     raw_data = json.loads(response_stats.text)
     number_games = (len(raw_data))
-    nfl_api.mongo_sports(raw_data)
-
+    #nfl_api.mongo_sports(raw_data)
     return raw_data
     # return {game_index: raw_data[game_index]['StadiumDetails'] for game_index in range(number_games)}
 
@@ -80,17 +76,14 @@ def get_users_team():
 def validate_users_team():
     pass
 
-
 def get_stadium_attributes(stadium_state, attribute_type):
-
     stadium_data = ({game_index: stadium_state[game_index] for game_index in range(len(stadium_state))})
     stadium_state_data = (
     {game_index: stadium_state[game_index]['StadiumDetails'][attribute_type] for game_index in stadium_data})
     stadium_attribute_counter = collections.Counter(stadium_state_data.values())
     Stadium_Stats[attribute_type] = stadium_attribute_counter
-    #print(stadium_attribute_counter)
+    #print(stadium_state_data)
     return dict(stadium_attribute_counter)
-
 
 def get_team_stats(users_team, nfl_data):
     team_schedule = {}
@@ -101,7 +94,6 @@ def get_team_stats(users_team, nfl_data):
         if users_team == nfl_game_data[game]['HomeTeam']:
             team_schedule.update({nfl_game_data[game]['Week']: nfl_game_data[game]['HomeScore']})
     print(f"{team_schedule=}")
-
 
 
 def main():
@@ -121,6 +113,7 @@ def main():
     get_team_stats(users_team=get_users_team(), nfl_data=download_nfl_data())
 
     #print('stadium stats ', stadium_stats)
+
 
     for stat in stadium_stats:
         print(stat)

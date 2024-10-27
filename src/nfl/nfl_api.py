@@ -1,6 +1,7 @@
 from pip._internal.index import collector
 from pymongo import MongoClient
 
+
 class SportAPI:
     def __init__(self, sport):
         self.sport = sport
@@ -21,8 +22,10 @@ class SportAPI:
         if self.chosen_sport == 2:
             return self.usta_api
 
+
 class MongoDBConnection:
     """MongoDB Connection"""
+
     def __init__(self, host='127.0.0.1', port=27017):
         """
         be sure to use the ip address not name for local windows
@@ -39,9 +42,11 @@ class MongoDBConnection:
     def __exit__(self, exc_type, exc_val, exc_tb):
         self.connection.close()
 
+
 def print_mdb_collection(collection_name):
     for doc in collection_name.find():
         print(doc)
+
 
 def mongo_sports(nfl_dict):
     mongo = MongoDBConnection()
@@ -55,11 +60,9 @@ def mongo_sports(nfl_dict):
 
         stats_ip = nfl_dict
         stats.insert_many(stats_ip)
-        #print_mdb_collection(stats)
+        # print_mdb_collection(stats)
 
         # start afresh next time?
         yorn = input("Drop data?")
         if yorn.upper() == 'Y':
             stats.drop()
-
-
